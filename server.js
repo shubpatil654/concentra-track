@@ -11,6 +11,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'concentratrack-secret-key-2024';
 
+const fsSync = require('fs');
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -18,6 +20,42 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Explicit static asset routes for serverless environments
+app.get('/styles.css', (req, res) => {
+    res.setHeader('Content-Type', 'text/css');
+    const candidates = [
+        path.join(__dirname, 'styles.css'),
+        path.join(__dirname, 'public', 'styles.css'),
+        path.join(__dirname, 'api', 'styles.css')
+    ];
+    for (const c of candidates) {
+        try {
+            if (fsSync.existsSync(c)) {
+                return res.send(fsSync.readFileSync(c, 'utf8'));
+            }
+        } catch (e) {}
+    }
+    res.status(404).send('/* styles not found */');
+});
+
+app.get('/script.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript');
+    const candidates = [
+        path.join(__dirname, 'script.js'),
+        path.join(__dirname, 'public', 'script.js'),
+        path.join(__dirname, 'api', 'script.js')
+    ];
+    for (const c of candidates) {
+        try {
+            if (fsSync.existsSync(c)) {
+                return res.send(fsSync.readFileSync(c, 'utf8'));
+            }
+        } catch (e) {}
+    }
+    res.status(404).send('// script not found');
+});
 
 // Data storage paths
 const SEED_DATA_DIR = path.join(__dirname, 'data');
