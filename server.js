@@ -20,7 +20,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
 
 // Data storage paths
-const DATA_DIR = path.join(__dirname, 'data');
+const SEED_DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = process.env.VERCEL ? '/tmp/data' : SEED_DATA_DIR;
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const TESTS_FILE = path.join(DATA_DIR, 'tests.json');
 
@@ -39,7 +40,12 @@ async function loadUsers() {
         const data = await fs.readFile(USERS_FILE, 'utf8');
         return JSON.parse(data);
     } catch {
-        return [];
+        try {
+            const seedData = await fs.readFile(path.join(SEED_DATA_DIR, 'users.json'), 'utf8');
+            return JSON.parse(seedData);
+        } catch {
+            return [];
+        }
     }
 }
 
@@ -48,7 +54,12 @@ async function loadTests() {
         const data = await fs.readFile(TESTS_FILE, 'utf8');
         return JSON.parse(data);
     } catch {
-        return [];
+        try {
+            const seedData = await fs.readFile(path.join(SEED_DATA_DIR, 'tests.json'), 'utf8');
+            return JSON.parse(seedData);
+        } catch {
+            return [];
+        }
     }
 }
 
