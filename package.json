@@ -10,11 +10,7 @@
     "flask-dev": "FLASK_ENV=development python app.py",
     "build": "npm run build:css",
     "build:css": "tailwindcss -i ./src/index.css -o ./styles.css",
-    "watch:css": "tailwindcss -i ./src/index.css -o ./styles.css --watch",
-    "react-start": "react-scripts start",
-    "react-build": "react-scripts build",
-    "react-test": "react-scripts test",
-    "react-eject": "react-scripts eject"
+    "watch:css": "tailwindcss -i ./src/index.css -o ./styles.css --watch"
   },
   "keywords": [
     "concentration",
@@ -39,8 +35,7 @@
     "mongoose": "^7.5.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
