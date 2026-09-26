@@ -511,10 +511,12 @@ app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
-    console.log(`ConcentraTrack server running on port ${PORT}`);
-    console.log(`Visit http://localhost:${PORT} to access the application`);
-    console.log(`Data will be stored in: ${DATA_DIR}`);
-});
+if (require.main === module || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`ConcentraTrack server running on port ${PORT}`);
+        console.log(`Visit http://localhost:${PORT} to access the application`);
+        console.log(`Data will be stored in: ${DATA_DIR}`);
+    });
+}
 
 module.exports = app;
