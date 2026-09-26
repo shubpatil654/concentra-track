@@ -4,13 +4,554 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ConcentraTrack - Student Concentration Tracker</title>
+    <link rel="stylesheet" href="/styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <meta name="description" content="Track and improve your concentration through interactive vision and hearing tests">
-    <meta name="keywords" content="concentration, focus, vision test, hearing test, student assessment">
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <!-- Login Page -->
+    <div id="loginPage" class="auth-page">
+        <div class="auth-container">
+            <div class="auth-form">
+                <h2>Login to ConcentraTrack</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" placeholder="Email" required autocomplete="email">
+                        <div class="input-error" id="loginEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                        <div class="input-error" id="loginPasswordError"></div>
+                    </div>
+                    <button type="submit" class="auth-btn" id="loginBtn">Login</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Page -->
+    <div id="signupPage" class="auth-page hidden">
+        <div class="auth-container">
+            <div class="auth-form">
+                <h2>Sign Up for ConcentraTrack</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <input type="text" id="signupName" placeholder="Full Name" required autocomplete="name">
+                        <div class="input-error" id="signupNameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="signupEmail" placeholder="Email" required autocomplete="email">
+                        <div class="input-error" id="signupEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="signupPassword" placeholder="Password (min 6 characters)" required autocomplete="new-password">
+                        <div class="input-error" id="signupPasswordError"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="confirmPassword" placeholder="Confirm Password" required autocomplete="new-password">
+                        <div class="input-error" id="confirmPasswordError"></div>
+                    </div>
+                    <button type="submit" class="auth-btn" id="signupBtn">Sign Up</button>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h3>ConcentraTrack</h3>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="vision-test">
+                    <i class="fas fa-eye"></i>
+                    <span>Vision Test</span>
+                </a>
+                <a href="#" class="nav-item" data-page="hearing-test">
+                    <i class="fas fa-headphones"></i>
+                    <span>Hearing Test</span>
+                </a>
+                <a href="#" class="nav-item" data-page="analysis">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analysis</span>
+                </a>
+                <a href="#" class="nav-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Welcome back! Track your concentration progress.</p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="showPage('vision-test')">
+                        <i class="fas fa-eye"></i>
+                        <span>Start Vision Test</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="showPage('hearing-test')">
+                        <i class="fas fa-headphones"></i>
+                        <span>Start Hearing Test</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="showPage('analysis')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>View Progress</span>
+                    </button>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="visionTestsCount">0</h3>
+                            <p>Vision Tests Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-headphones"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="hearingTestsCount">0</h3>
+                            <p>Hearing Tests Completed</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="avgScore">0%</h3>
+                            <p>Average Score</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="bestScore">0%</h3>
+                            <p>Best Score</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Concentration Level Indicator -->
+                <div class="concentration-indicator">
+                    <h2>Current Concentration Level</h2>
+                    <div class="concentration-meter">
+                        <div id="concentrationBar" class="concentration-bar"></div>
+                        <div class="concentration-labels">
+                            <span>Poor</span>
+                            <span>Average</span>
+                            <span>Good</span>
+                            <span>Excellent</span>
+                        </div>
+                    </div>
+                    <p id="concentrationMessage" class="concentration-message">Take a test to see your concentration level</p>
+                </div>
+
+                <div class="recent-tests">
+                    <h2>Recent Test Results</h2>
+                    <div id="recentTestsList" class="tests-list">
+                        <p class="no-tests">No tests completed yet. Start with a vision or hearing test!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vision Test Page -->
+            <div id="vision-test" class="page">
+                <div class="page-header">
+                    <h1>Vision Test</h1>
+                    <p>Test your pattern recognition skills</p>
+                </div>
+                <div id="visionTestMenu" class="test-menu">
+                    <div class="level-selection">
+                        <h2>Choose Your Vision Test Level</h2>
+                        <p class="level-description">Select a difficulty level based on your concentration skills. Each level has different time limits and pattern complexity.</p>
+                        <div class="level-cards">
+                            <div class="level-card easy-card" data-level="easy">
+                                <div class="level-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <h3>Easy Level</h3>
+                                <div class="level-details">
+                                    <p><i class="fas fa-clock"></i> 20 seconds per question</p>
+                                    <p><i class="fas fa-puzzle-piece"></i> Simple patterns</p>
+                                    <p><i class="fas fa-list-ol"></i> Basic sequences (A,B,C or 2,4,6)</p>
+                                    <p><i class="fas fa-shapes"></i> Simple shape patterns</p>
+                                    <p class="shuffle-info"><i class="fas fa-random"></i> Questions shuffled each test</p>
+                                </div>
+                                <button class="start-test-btn" data-test="vision" data-level="easy">
+                                    <i class="fas fa-play"></i> Start Easy Test
+                                </button>
+                            </div>
+                            <div class="level-card medium-card" data-level="medium">
+                                <div class="level-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <h3>Medium Level</h3>
+                                <div class="level-details">
+                                    <p><i class="fas fa-clock"></i> 10 seconds per question</p>
+                                    <p><i class="fas fa-puzzle-piece"></i> Moderate patterns</p>
+                                    <p><i class="fas fa-calculator"></i> Mathematical sequences</p>
+                                    <p><i class="fas fa-font"></i> Letter-number combinations</p>
+                                    <p class="shuffle-info"><i class="fas fa-random"></i> Questions shuffled each test</p>
+                                </div>
+                                <button class="start-test-btn" data-test="vision" data-level="medium">
+                                    <i class="fas fa-play"></i> Start Medium Test
+                                </button>
+                            </div>
+                            <div class="level-card hard-card" data-level="hard">
+                                <div class="level-icon">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <h3>Hard Level</h3>
+                                <div class="level-details">
+                                    <p><i class="fas fa-clock"></i> 5 seconds per question</p>
+                                    <p><i class="fas fa-puzzle-piece"></i> Complex patterns</p>
+                                    <p><i class="fas fa-infinity"></i> Fibonacci & Prime sequences</p>
+                                    <p><i class="fas fa-cogs"></i> Advanced logic patterns</p>
+                                    <p class="shuffle-info"><i class="fas fa-random"></i> Questions shuffled each test</p>
+                                </div>
+                                <button class="start-test-btn" data-test="vision" data-level="hard">
+                                    <i class="fas fa-play"></i> Start Hard Test
+                                </button>
+                            </div>
+                        </div>
+                        <div class="level-tips">
+                            <h3><i class="fas fa-lightbulb"></i> Tips for Success</h3>
+                            <ul>
+                                <li>Start with Easy level to understand the pattern types</li>
+                                <li>Look for mathematical relationships in number sequences</li>
+                                <li>Pay attention to alphabetical order and skip patterns</li>
+                                <li>Practice regularly to improve your pattern recognition speed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="visionTestArea" class="test-area hidden">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <div class="test-level-badge">
+                                <i class="fas fa-layer-group"></i>
+                                <span id="visionLevel">Easy</span> Level
+                            </div>
+                            <div class="test-progress">
+                                Question <span id="visionCurrentQ">1</span> of <span id="visionTotalQ">10</span>
+                            </div>
+                        </div>
+                        <div class="timer-container">
+                            <div class="timer-label">Time Remaining</div>
+                            <div class="timer">
+                                <i class="fas fa-clock"></i>
+                                <span id="visionTimer">20</span>s
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-bg">
+                            <div id="visionProgressBar" class="progress-bar-fill"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span id="visionProgressPercent">10%</span> Complete
+                        </div>
+                    </div>
+                    <div class="pattern-container">
+                        <div class="pattern-label">Find the next item in the sequence:</div>
+                        <div id="patternDisplay" class="pattern-display"></div>
+                    </div>
+                    <div class="options-container">
+                        <div class="options-label">Choose the correct answer:</div>
+                        <div id="patternOptions" class="pattern-options"></div>
+                    </div>
+                    <button id="visionNextBtn" class="next-btn hidden">
+                        <i class="fas fa-arrow-right"></i>
+                        Next Question
+                    </button>
+                </div>
+                <div id="visionResults" class="test-results hidden">
+                    <h2>Vision Test Results</h2>
+                    <div class="results-summary">
+                        <div class="result-item">
+                            <span>Score:</span>
+                            <span id="visionScore">0/10</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Percentage:</span>
+                            <span id="visionPercentage">0%</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Level:</span>
+                            <span id="visionResultLevel">Easy</span>
+                        </div>
+                    </div>
+                    <button id="retakeVisionTest" class="retry-btn">Take Another Test</button>
+                </div>
+            </div>
+
+            <!-- Hearing Test Page -->
+            <div id="hearing-test" class="page">
+                <div class="page-header">
+                    <h1>Hearing Test</h1>
+                    <p>Test your audio comprehension skills</p>
+                </div>
+                <div id="hearingTestMenu" class="test-menu">
+                    <div class="level-selection">
+                        <h2>Choose Your Hearing Test Level</h2>
+                        <p class="level-description">Select a difficulty level to test your audio comprehension and concentration. Each level has different audio durations and content complexity.</p>
+                        <div class="level-cards">
+                            <div class="level-card easy-card" data-level="easy">
+                                <div class="level-icon">
+                                    <i class="fas fa-volume-down"></i>
+                                </div>
+                                <h3>Easy Level</h3>
+                                <div class="level-details">
+                                    <p><i class="fas fa-clock"></i> 5 second audio clips</p>
+                                    <p><i class="fas fa-font"></i> Simple words & phrases</p>
+                                    <p><i class="fas fa-microphone"></i> Clear pronunciation</p>
+                                    <p><i class="fas fa-check-circle"></i> 10 questions</p>
+                                </div>
+                                <button class="start-test-btn" data-test="hearing" data-level="easy">
+                                    <i class="fas fa-play"></i> Start Easy Test
+                                </button>
+                            </div>
+                            <div class="level-card medium-card" data-level="medium">
+                                <div class="level-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                                <h3>Medium Level</h3>
+                                <div class="level-details">
+                                    <p><i class="fas fa-clock"></i> 10 second audio clips</p>
+                                    <p><i class="fas fa-comment"></i> Short sentences</p>
+                                    <p><i class="fas fa-microphone-alt"></i> Moderate pace</p>
+                                    <p><i class="fas fa-check-circle"></i> 10 questions</p>
+                                </div>
+                                <button class="start-test-btn" data-test="hearing" data-level="medium">
+                                    <i class="fas fa-play"></i> Start Medium Test
+                                </button>
+                            </div>
+                            <div class="level-card hard-card" data-level="hard">
+                                <div class="level-icon">
+                                    <i class="fas fa-broadcast-tower"></i>
+                                </div>
+                                <h3>Hard Level</h3>
+                                <div class="level-details">
+                                    <p><i class="fas fa-clock"></i> 20 second audio clips</p>
+                                    <p><i class="fas fa-paragraph"></i> Complex sentences</p>
+                                    <p><i class="fas fa-tachometer-alt"></i> Fast pace</p>
+                                    <p><i class="fas fa-check-circle"></i> 10 questions</p>
+                                </div>
+                                <button class="start-test-btn" data-test="hearing" data-level="hard">
+                                    <i class="fas fa-play"></i> Start Hard Test
+                                </button>
+                            </div>
+                        </div>
+                        <div class="level-tips">
+                            <h3><i class="fas fa-lightbulb"></i> Tips for Success</h3>
+                            <ul>
+                                <li>Use headphones for better audio clarity</li>
+                                <li>Listen carefully to the entire audio before typing</li>
+                                <li>Focus on key words if you miss some parts</li>
+                                <li>You can replay the audio multiple times</li>
+                                <li>Type exactly what you hear for best accuracy</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="hearingTestArea" class="test-area hidden">
+                    <div class="test-header">
+                        <div class="test-info">
+                            <div class="test-level-badge">
+                                <i class="fas fa-headphones"></i>
+                                <span id="hearingLevel">Easy</span> Level
+                            </div>
+                            <div class="test-progress">
+                                Question <span id="hearingCurrentQ">1</span> of <span id="hearingTotalQ">10</span>
+                            </div>
+                        </div>
+                        <div class="audio-status">
+                            <div class="status-label">Audio Status</div>
+                            <div id="audioStatus" class="status-indicator ready">
+                                <i class="fas fa-play-circle"></i>
+                                Ready to Play
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-bg">
+                            <div id="hearingProgressBar" class="progress-bar-fill"></div>
+                        </div>
+                        <div class="progress-text">
+                            <span id="hearingProgressPercent">10%</span> Complete
+                        </div>
+                    </div>
+                    <div class="audio-container">
+                        <div class="audio-instruction">
+                            <i class="fas fa-info-circle"></i>
+                            Listen carefully to the audio clip and type what you hear
+                        </div>
+                        <div class="audio-player">
+                            <button id="playAudioBtn" class="play-btn">
+                                <i class="fas fa-play"></i>
+                                Play Audio
+                            </button>
+                            <div class="audio-controls">
+                                <div class="audio-progress">
+                                    <div id="audioProgressBar" class="progress-bar"></div>
+                                </div>
+                                <div class="audio-duration">
+                                    <span id="audioDuration">5s</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-container">
+                        <label for="audioInput">
+                            <i class="fas fa-keyboard"></i>
+                            Type what you heard:
+                        </label>
+                        <textarea id="audioInput" placeholder="Enter the text you heard..." rows="4"></textarea>
+                        <div class="input-stats">
+                            <span id="wordCount">0 words</span>
+                            <span id="charCount">0 characters</span>
+                        </div>
+                    </div>
+                    <button id="hearingNextBtn" class="next-btn">
+                        <i class="fas fa-arrow-right"></i>
+                        Submit & Next
+                    </button>
+                </div>
+                <div id="hearingResults" class="test-results hidden">
+                    <h2>Hearing Test Results</h2>
+                    <div class="results-summary">
+                        <div class="result-item">
+                            <span>Average Accuracy:</span>
+                            <span id="hearingAccuracy">0%</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Questions Completed:</span>
+                            <span id="hearingCompleted">0/10</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Level:</span>
+                            <span id="hearingResultLevel">Easy</span>
+                        </div>
+                    </div>
+                    <button id="retakeHearingTest" class="retry-btn">Take Another Test</button>
+                </div>
+            </div>
+
+            <!-- Analysis Page -->
+            <div id="analysis" class="page">
+                <div class="page-header">
+                    <h1>Analysis</h1>
+                    <p>Track your concentration progress over time</p>
+                </div>
+                <div class="analysis-content">
+                    <div class="chart-container">
+                        <canvas id="progressChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="analysis-stats">
+                        <div class="stat-group">
+                            <h3>Vision Test Performance</h3>
+                            <div class="performance-metrics">
+                                <div class="metric">
+                                    <span>Easy Level Average:</span>
+                                    <span id="visionEasyAvg">0%</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Medium Level Average:</span>
+                                    <span id="visionMediumAvg">0%</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Hard Level Average:</span>
+                                    <span id="visionHardAvg">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-group">
+                            <h3>Hearing Test Performance</h3>
+                            <div class="performance-metrics">
+                                <div class="metric">
+                                    <span>Easy Level Average:</span>
+                                    <span id="hearingEasyAvg">0%</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Medium Level Average:</span>
+                                    <span id="hearingMediumAvg">0%</span>
+                                </div>
+                                <div class="metric">
+                                    <span>Hard Level Average:</span>
+                                    <span id="hearingHardAvg">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile" class="page">
+                <div class="page-header">
+                    <h1>Profile</h1>
+                    <p>Manage your account settings</p>
+                </div>
+                <div class="profile-content">
+                    <div class="profile-card">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="profileName">Student Name</h2>
+                            <p id="profileEmail">student@email.com</p>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <h3>Your Statistics</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span>Total Tests:</span>
+                                <span id="totalTests">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Member Since:</span>
+                                <span id="memberSince">Today</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Best Streak:</span>
+                                <span id="bestStreak">0 days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script.js"></script>
 </body>
 </html>
